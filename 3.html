@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天气符号识别 - 数据输入与分层作业</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f7ff;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 15px;
+        }
+        .input-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #34495e;
+            font-size: 16px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 8px;
+            display: none;
+            background-color: #e8f4f8;
+            border: 1px solid #bce8f1;
+        }
+        .loading {
+            margin-top: 30px;
+            padding: 40px 0;
+            text-align: center;
+            display: none;
+        }
+        .loading-icon {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        .loading-text {
+            color: #34495e;
+            font-size: 16px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .class-evaluation {
+            color: #27ae60;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #27ae60;
+        }
+        .homework-title {
+            color: #2c3e50;
+            font-size: 18px;
+            margin: 20px 0 15px;
+            font-weight: bold;
+        }
+        .homework-content {
+            color: #34495e;
+            line-height: 1.8;
+            margin-left: 20px;
+        }
+        .layer {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .layer-a {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        .layer-b {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+        }
+        .layer-c {
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        .layer-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 17px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>天气符号识别数据录入</h1>
+        <form id="dataForm">
+            <div class="input-group">
+                <label for="dataA">A类数据（熟练组相关指标）：</label>
+                <input type="text" id="dataA" name="dataA" required placeholder="例如：正确率90%以上人数/比例">
+            </div>
+            <div class="input-group">
+                <label for="dataB">B类数据（进阶组相关指标）：</label>
+                <input type="text" id="dataB" name="dataB" required placeholder="例如：正确率70%-90%人数/比例">
+            </div>
+            <div class="input-group">
+                <label for="dataC">C类数据（基础组相关指标）：</label>
+                <input type="text" id="dataC" name="dataC" required placeholder="例如：正确率70%以下人数/比例">
+            </div>
+            <button type="submit" id="submitBtn">提交数据并生成分层作业</button>
+        </form>
+        
+        <!-- 加载动画区域 -->
+        <div class="loading" id="loading">
+            <div class="loading-icon"></div>
+            <div class="loading-text">数据计算中，请稍候...</div>
+        </div>
+        
+        <!-- 结果展示区域 -->
+        <div class="result" id="result">
+            <div class="class-evaluation">班级整体对天气符号识别优秀！</div>
+            
+            <div class="homework-title">分层作业布置：</div>
+            
+            <div class="layer layer-a">
+                <div class="layer-title">A层（熟练组）：</div>
+                <div class="homework-content">
+                    1. 利用在线地图，选择3个不同大洲的城市，对比其当日天气预报，分析天气差异的可能原因（为后续“气候的地区差异”铺垫）。
+                </div>
+            </div>
+            
+            <div class="layer layer-b">
+                <div class="layer-title">B层（进阶组）：</div>
+                <div class="homework-content">
+                    1. 用手绘或电子绘图工具，绘制10个常用天气符号并标注名称；<br>
+                    2. 查询家乡未来3天天气，为家人设计“出行建议（含穿衣、是否带伞等）”。
+                </div>
+            </div>
+            
+            <div class="layer layer-c">
+                <div class="layer-title">C层（基础组）：</div>
+                <div class="homework-content">
+                    1. 识别教材“常用天气符号图（图5-3）”所有符号，通过“地理闯关”APP再次完成“符号匹配游戏”并截图提交正确率；<br>
+                    2. 记录明天的天气（气温、降水、风力），对比“预报”与“实际情况”。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('dataForm');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // 阻止表单默认提交
+            
+            // 获取输入数据
+            const dataA = document.getElementById('dataA').value;
+            const dataB = document.getElementById('dataB').value;
+            const dataC = document.getElementById('dataC').value;
+            
+            // 显示加载动画，隐藏结果，禁用按钮防止重复提交
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = '处理中...';
+            
+            // 3秒后显示结果
+            setTimeout(() => {
+                loading.style.display = 'none'; // 隐藏加载动画
+                result.style.display = 'block'; // 显示结果
+                submitBtn.disabled = false; // 恢复按钮
+                submitBtn.textContent = '提交数据并生成分层作业';
+                
+                // 平滑滚动到结果区域
+                result.scrollIntoView({ behavior: 'smooth' });
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
